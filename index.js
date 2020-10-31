@@ -22,7 +22,7 @@ function populateRestList(JsonData)
 elem0.classList.add('card', 'text-center');
 var elem1 = document.createElement('div');
 elem1.classList.add('card-header');
-var txtnode = document.createTextNode('Cuisines : '+ JsonData.restaurants[i].restaurant.establishment.join(" - "));
+var txtnode = document.createTextNode( JsonData.restaurants[i].restaurant.establishment.join(" - "));
 elem1.appendChild(txtnode);
 elem0.appendChild(elem1);
 var elem2 = document.createElement('div');
