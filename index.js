@@ -13,7 +13,7 @@ async function getRestfromCoord()
 
 function populateRestList(JsonData)
 {
-
+    document.getElementById("retaurant-container").innerHTML=""
 
     for(let i=0;i<JsonData.restaurants.length;i++)
     {
@@ -139,11 +139,214 @@ document.getElementById("retaurant-container").appendChild(elem0);
 
 async function main(){
 
+    window.lat=0;
+    window.long=0;
     const results = await getRestfromCoord();
 
     populateRestList(results);
 
 
+
+
+
+
+
 }
 
 main()
+
+
+function attachAutoCompleteCity()
+{
+
+    document.querySelector("#citySearch").addEventListener("input",async (e)=>
+    {
+    console.log(e.target.value)
+
+        if(e.target.value.length<3){return;}
+    const locatSuggestion = await fetch("https://developers.zomato.com/api/v2.1/cities?="+e.target.value+"&count=5",{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}})
+    const json = await locatSuggestion.json();
+    console.log(json)
+
+
+        
+        let arr = json.location_suggestions
+        var a, b, i, val = e.target.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", e.target.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        e.target.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+         
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].title + "</strong>";
+            b.setAttribute("data-entity_id",arr[i].entity_id);
+            b.setAttribute("data-entity_type",arr[i].entity_type);
+            b.setAttribute("data-latitude",arr[i].latitude);
+            b.setAttribute("data-longitude",arr[i].longitude);
+           
+            /*insert a input field that will hold the current array item's value:*/
+            
+            /*execute a function when someone clicks on the item value (DIV element):*/
+                b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                
+                document.querySelector("#citySearch").setAttribute("data-entity_id",e.target.dataset.entity_id)
+                document.querySelector("#citySearch").setAttribute("data-entity_type",e.target.dataset.entity_type)
+                document.querySelector("#citySearch").setAttribute("data-latitude",e.target.dataset.latitude)
+                document.querySelector("#citySearch").setAttribute("data-longitude",e.target.dataset.longitude)
+                document.querySelector("#citySearch").value = e.target.innerText;
+                closeAllLists();
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                
+            });
+            a.appendChild(b);
+          
+        }
+    
+
+
+
+
+
+
+
+
+
+
+}
+    )
+
+
+
+}
+
+
+
+
+
+
+function attachAutoCompleteLocation()
+{
+
+    document.querySelector("#locationSearch").addEventListener("input",async (e)=>
+    {
+    console.log(e.target.value)
+    if(e.target.value.length<3){return;}
+    const locatSuggestion = await fetch("https://developers.zomato.com/api/v2.1/locations?query="+e.target.value+"&lat="+window.lat+"&lon="+window.long+"&count=5",{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}})
+    const json = await locatSuggestion.json();
+    console.log(json)
+
+
+        
+        let arr = json.location_suggestions
+        var a, b, i, val = e.target.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", e.target.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        e.target.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+         
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].title + "</strong>";
+            b.setAttribute("data-entity_id",arr[i].entity_id);
+            b.setAttribute("data-entity_type",arr[i].entity_type);
+            b.setAttribute("data-latitude",arr[i].latitude);
+            b.setAttribute("data-longitude",arr[i].longitude);
+           
+            /*insert a input field that will hold the current array item's value:*/
+            
+            /*execute a function when someone clicks on the item value (DIV element):*/
+                b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                
+                document.querySelector("#locationSearch").setAttribute("data-entity_id",e.target.dataset.entity_id)
+                document.querySelector("#locationSearch").setAttribute("data-entity_type",e.target.dataset.entity_type)
+                document.querySelector("#locationSearch").setAttribute("data-latitude",e.target.dataset.latitude)
+                document.querySelector("#locationSearch").setAttribute("data-longitude",e.target.dataset.longitude)
+                document.querySelector("#locationSearch").value = e.target.innerText;
+                closeAllLists();
+                attachSelectLocation();
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                
+            });
+            a.appendChild(b);
+          
+        }
+    
+
+
+
+
+
+
+
+
+
+
+}
+    )
+
+
+
+}
+
+
+async function  applySelectLocation(){
+
+
+
+
+    let sortBy = document.querySelector("#orderBy").value
+    let sortOrder = document.querySelector("#orderVal").value
+
+    let entityID= document.querySelector("#locationSearch").dataset.entity_id
+    let entityType=document.querySelector("#locationSearch").dataset.entity_type
+
+    const resList = await fetch("https://developers.zomato.com/api/v2.1/search?entity_type="+entityType+"&entity_id="+entityID+"&start=0&count=20&radius=3000&sort="+sortBy+"&order="+sortOrder,{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}});
+  const Json = await resList.json();
+
+  populateRestList(Json)
+
+ }
+
+
+
+
+
+//attachAutoCompleteCity()
+attachAutoCompleteLocation()
+
+function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (true ) {
+      x[i].parentNode.removeChild(x[i]);
+    }
+  }
+}   
+

@@ -6,6 +6,56 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+    <style>
+        .autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+}
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+    </style>
+
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
@@ -23,7 +73,9 @@
               </button>
             </div>
             <div class="modal-body">
-              ...
+
+                <iframe src="https://www.zomato.com/chandigarh/xtreme-sports-bar-grill-1-sector-22/photos" frameborder="0"></iframe>
+            
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -37,7 +89,36 @@
 
         <a name="" id="" class="btn btn-primary" href="#" role="button">Get Location</a>
 
+        <form autocomplete="off" action="/action_page.php">
+       
 
+            <div class="autocomplete" style="width:300px;">
+                <input  id="locationSearch" type="text" name="myCountry" placeholder="Select Location...">
+              </div>
+              <div class="autocomplete" style="width:300px;">
+                <input  id="restSearch" type="text" name="myCountry" placeholder="Select Resturant or Search for All results">
+              </div>
+              <div>
+                  <label for="orderBy">Order By:</label>
+                  <select name="orderBy" id="orderBy">
+                    <option val="cost">Cost</option>
+                    <option val="rating">Rating</option>
+                    <option val="real_distance">Distance</option>
+                  </select>
+
+
+                  <label for="orderVal">Order :</label>
+                  <select name="orderVal" id="orderVal">
+                    <option val="asc">Ascending</option>
+                    <option val="desc">Descending</option>
+                    
+                  </select>
+              </div>
+
+            <input type="submit">   
+          </form>
+
+        <input id="locationSearch" type="text" placeholder="Enter Location.." class="form-control form-control-underlined">
         
 
 
@@ -119,7 +200,7 @@
     
         </div>
 
-
+      
 
 
     </div>
@@ -133,8 +214,7 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="index.js"></script>
   </body>
