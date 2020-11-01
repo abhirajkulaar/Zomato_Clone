@@ -1,4 +1,18 @@
 
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(location) {
+            console.log(location.coords.latitude);
+            console.log(location.coords.longitude);
+           window.latitude=location.coords.latitude;
+           window.longitude=location.coords.longitude;
+           $('#reviewModal').modal('hide');
+          });
+    } else {
+      return;
+    }
+  }
+
 async function getRestfromCoord()
 {
  
@@ -32,7 +46,9 @@ elem3.classList.add('row');
 var elem4 = document.createElement('div');
 elem4.classList.add('col', 'col-12', 'col-md-4', 'col-lg-4');
 var elem5 = document.createElement('img');
-elem5.setAttribute('src', JsonData.restaurants[i].restaurant.featured_image);
+let img_source = JsonData.restaurants[i].restaurant.featured_image;
+if (img_source==undefined||img_source==""){img_source="photos/missing.jpg"}
+elem5.setAttribute('src', img_source);
 elem5.classList.add('img-fluid', '${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}');
 elem5.setAttribute('alt', '');
 elem4.appendChild(elem5);
@@ -99,7 +115,8 @@ elem22.classList.add('row');
 var elem23 = document.createElement('div');
 elem23.classList.add('col-6');
 var elem24 = document.createElement('a');
-elem24.setAttribute('href', 'restinfo.html?res-id='+JsonData.restaurants[i].restaurant.R.res_id);
+elem24.setAttribute('href', JsonData.restaurants[i].restaurant.url);
+elem24.setAttribute('target', "_blank");
 elem24.classList.add('btn', 'btn-primary', 'btn-lg', 'btn-block');
 var txtnode = document.createTextNode('View Details');
 elem24.appendChild(txtnode);
@@ -112,6 +129,7 @@ elem26.setAttribute('data-phone', JsonData.restaurants[i].restaurant.phone_numbe
 elem26.classList.add('btn', 'btn-success', 'btn-lg', 'btn-block', 'call-button');
 var txtnode = document.createTextNode('Call');
 elem26.appendChild(txtnode);
+elem26.addEventListener("click",showPhoneModal)
 elem25.appendChild(elem26);
 elem22.appendChild(elem25);
 elem22.appendChild(elem23);
@@ -135,18 +153,25 @@ document.getElementById("retaurant-container").appendChild(elem0);
 }
 
 
-
+function showPhoneModal(e)
+{
+    $('#phoneModal').modal('show');
+    document.querySelector("#phoneModalTitle")=e.target.dataset.phone
+}
 
 async function main(){
 
-    window.lat=0;
-    window.long=0;
-    const results = await getRestfromCoord();
+    window.latitude=0;
+    window.longitude=0;
+    //const results = await getRestfromCoord();
 
-    populateRestList(results);
+    //populateRestList(results);
+    $('#reviewModal').modal({backdrop: 'static', keyboard: false})  
 
+    $('#reviewModal').modal('show');
+    getLocation()
 
-
+    document.querySelector("#restSearchForm").addEventListener("submit",()=>applySelectRestaurant())
 
 
 
@@ -287,7 +312,7 @@ function attachAutoCompleteLocation()
                 document.querySelector("#locationSearch").setAttribute("data-longitude",e.target.dataset.longitude)
                 document.querySelector("#locationSearch").value = e.target.innerText;
                 closeAllLists();
-                attachSelectLocation();
+                applySelectLocation();
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 
@@ -314,6 +339,161 @@ function attachAutoCompleteLocation()
 }
 
 
+function attachAutoCompleteCountry()
+{
+
+    document.querySelector("#countrySearch").addEventListener("input",async (e)=>
+    {
+    console.log(e.target.value)
+    if(e.target.value.length<3){return;}
+    const locatSuggestion = await fetch("https://restcountries.eu/rest/v2/name/"+e.target.value)
+    const json = await locatSuggestion.json();
+    console.log(json)
+
+
+        
+        let arr = json
+        var a, b, i, val = e.target.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", e.target.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        e.target.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+         
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr[i].name + "</strong>";
+            b.setAttribute("data-lat",arr[i].latlng[0]);
+            b.setAttribute("data-long",arr[i].latlng[1]);
+        
+           
+            /*insert a input field that will hold the current array item's value:*/
+            
+            /*execute a function when someone clicks on the item value (DIV element):*/
+                b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                window.latitude=e.target.dataset.lat;
+                window.longitude=e.target.dataset.long;
+        
+                closeAllLists();
+                $("#reviewModal").modal('hide')
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                
+            });
+            a.appendChild(b);
+          
+        }
+    
+
+
+
+
+
+
+
+
+
+
+}
+    )
+
+
+
+}
+
+function attachAutoCompleteRestaurant()
+{
+
+    document.querySelector("#restSearch").addEventListener("input",async (e)=>
+    {
+    console.log(e.target.value)
+    if(e.target.value.length<3){return;}
+    let sortBy = document.querySelector("#orderBy").value
+    let sortOrder = document.querySelector("#orderVal").value
+
+    let entityID= document.querySelector("#locationSearch").dataset.entity_id
+    let entityType=document.querySelector("#locationSearch").dataset.entity_type
+
+    //const resList = await fetch("https://developers.zomato.com/api/v2.1/search?entity_type="+entityType+"&entity_id="+entityID+"&start=0&count=20&radius=3000&sort="+sortBy+"&order="+sortOrder,{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}});
+    //const locatSuggestion = await fetch("https://developers.zomato.com/api/v2.1/locations?query="+e.target.value+"&lat="+window.lat+"&lon="+window.long+"&count=5",{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}})
+    
+    const locatSuggestion = await fetch("https://developers.zomato.com/api/v2.1/search?entity_id="+entityID+"&entity_type="+entityType+"&q="+e.target.value+"&start=0&count=7&radius=3000&sort="+sortBy+"&order="+sortOrder,{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}})
+    //https://developers.zomato.com/api/v2.1/search?entity_id=5401&entity_type=subzone&q=red&start=0&count=6&radius=3000&sort=cost&order=asc
+
+    const json = await locatSuggestion.json();
+    console.log(json)
+
+
+        
+        let arr = json;
+        var a, b, i, val = e.target.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", e.target.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        e.target.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.restaurants.length; i++) {
+          /*check if the item starts with the same letters as the text field value:*/
+         
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = "<strong>" + arr.restaurants[i].restaurant.name + "</strong>" + ", " +arr.restaurants[i].restaurant.location.locality_verbose;
+            b.setAttribute("data-rest_name",arr.restaurants[i].restaurant.name);
+            b.setAttribute("data-rest_id",arr.restaurants[i].restaurant.id);
+ 
+           
+            /*insert a input field that will hold the current array item's value:*/
+            
+            /*execute a function when someone clicks on the item value (DIV element):*/
+                b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                document.querySelector("#restSearch").setAttribute("data-rest_name",e.target.dataset.rest_name)
+                document.querySelector("#restSearch").setAttribute("data-rest_id",e.target.dataset.rest_id)
+                document.querySelector("#restSearch").value = e.target.innerText;
+                closeAllLists();
+                applySelectRestaurant();
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                
+            });
+            a.appendChild(b);
+          
+        }
+    
+
+
+
+
+
+
+
+
+
+
+}
+    )
+
+
+
+}
+
 async function  applySelectLocation(){
 
 
@@ -333,12 +513,29 @@ async function  applySelectLocation(){
  }
 
 
+async function applySelectRestaurant(){
 
+    let lat = document.querySelector("#locationSearch").dataset.latitude;
+    let long = document.querySelector("#locationSearch").dataset.longitude;
+    if(lat==undefined){
+        lat=window.latitude;
+        long=window.longitude;
+    }
+    let qval = document.querySelector("#restSearch").value
+    let sortBy = document.querySelector("#orderBy").value
+    let sortOrder = document.querySelector("#orderVal").value
+    const locatSuggestion = await fetch("https://developers.zomato.com/api/v2.1/search?lat="+lat+"&long="+long+"&q="+qval+"&start=0&count=7&radius=3000&sort="+sortBy+"&order="+sortOrder,{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}})
+    //https://developers.zomato.com/api/v2.1/search?entity_id=5401&entity_type=subzone&q=red&start=0&count=6&radius=3000&sort=cost&order=asc
 
+    const json = await locatSuggestion.json();
+    populateRestList(json)
+
+}
 
 //attachAutoCompleteCity()
 attachAutoCompleteLocation()
-
+attachAutoCompleteRestaurant()
+attachAutoCompleteCountry()
 function closeAllLists(elmnt) {
     /*close all autocomplete lists in the document,
     except the one passed as an argument:*/
@@ -349,4 +546,6 @@ function closeAllLists(elmnt) {
     }
   }
 }   
+
+
 

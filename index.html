@@ -8,6 +8,21 @@
 
 
     <style>
+
+body
+{
+    background-image: url(photos/main_background.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  background-size: cover;
+}
+
+
+.top-icon
+{
+width: 100px;
+}
+
         .autocomplete {
   /*the container must be positioned relative:*/
   position: relative;
@@ -60,44 +75,73 @@ input[type=submit] {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
   <body>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reviewModal">
-        Launch demo modal
-      </button>
-    <div class="modal fade show" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+   
+    <div class="modal fade bd-example-modal-lg " id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+              <h5 class="modal-title" id="exampleModalLabel">Location Select</h5>
+              
+                
               </button>
             </div>
             <div class="modal-body">
-
-                <iframe src="https://www.zomato.com/chandigarh/xtreme-sports-bar-grill-1-sector-22/photos" frameborder="0"></iframe>
+                <label>Kindly allow location access or select city from drop down:</label>
+                <div class="autocomplete" style="width:300px;">
+                    <input  id="countrySearch" type="text" name="myCountry" placeholder="Select Country...">
+                  </div>
             
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              
              
             </div>
           </div>
         </div>
       </div>
 
+
+      <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 id="phoneModalTitle"  class="modal-title text-center"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body text-center">
+              <p id = "phoneModalDetails">Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
     <div class="container">
 
-        <a name="" id="" class="btn btn-primary" href="#" role="button">Get Location</a>
+     <div class="card text-center">
+       <img class="top-icon  align-self-center " src="photos/potato.png" alt="">
+       <div class="card-body">
+         <h2 class="card-title">Potato</h2>
+         <p class="card-text">The largest food review website in the world!</p>
+       </div>
+     </div>
 
-        <form autocomplete="off" action="/action_page.php">
+        <form id="restSearchForm" autocomplete="off" action="javaScript:void(0)">
        
-
+            
             <div class="autocomplete" style="width:300px;">
                 <input  id="locationSearch" type="text" name="myCountry" placeholder="Select Location...">
               </div>
               <div class="autocomplete" style="width:300px;">
                 <input  id="restSearch" type="text" name="myCountry" placeholder="Select Resturant or Search for All results">
               </div>
+              <button type="submit" name="" id="" class="btn btn-primary">Go</button>
               <div>
                   <label for="orderBy">Order By:</label>
                   <select name="orderBy" id="orderBy">
@@ -115,10 +159,10 @@ input[type=submit] {
                   </select>
               </div>
 
-            <input type="submit">   
+             
           </form>
 
-        <input id="locationSearch" type="text" placeholder="Enter Location.." class="form-control form-control-underlined">
+  
         
 
 
@@ -131,64 +175,7 @@ input[type=submit] {
 
 
 
-            <div class="card text-center">
-                <div class="card-header">
-                  Featured
-                </div>
-                <div class="card-body">
-                    <div class="row">
-    
-                        <div class="col col-12 col-md-4 col-lg-4">
-                            <img src="https://b.zmtcdn.com/data/pictures/0/122000/56f1d0b90dadf835893b60814ccdc4c4.jpg"class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
-                        </div>
             
-                        <div class="col">
-                            <div class="row">
-    
-                                <div class="col-12">
-                                    <h3 class="card-title">Restaurant Name</h3>
-                                    <h5> <b>Rating: 3.6/5 </b> (1000 Reviews) </h5>  
-                                    <p class="card-text"> <div class= "font-weight-bold">Adress Line 1. </div>
-                                     <div>Adress Line 2. </div></p>
-    
-                                     <p class="card-text">
-    
-                                        <div class="card-text">Cuisines: <span>List of cusisines</span></div>
-                                        <div class="card-text">Cost for 2: <span>500</span></div>
-                                        <div class="card-text">Hours: <span>List of cusisines</span></div>
-    
-    
-                                     </p>
-    
-    
-                                 
-                                </div>
-    
-    
-                            </div>
-                      
-    
-                            <div class="row">
-                                <div class="col-6">
-                                    <a href="restinfo.html?res-id=restid" class="btn btn-success btn-lg btn-block">Call</a>  
-                                </div>
-    
-                                <div class="col-6">
-                                    <button data-phone="98773223,232312112"  class="btn btn-primary btn-lg btn-block call-button">View Details</button>
-                                </div>
-                            </div>
-    
-                            
-                              
-            
-                        </div>
-            
-                    </div>
-                </div>
-                <div class="card-footer text-muted">
-                  2 days ago
-                </div>
-              </div>
     
     
     
@@ -214,7 +201,8 @@ input[type=submit] {
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="index.js"></script>
   </body>
