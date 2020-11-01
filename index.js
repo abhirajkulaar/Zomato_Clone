@@ -111,7 +111,7 @@ elem8.appendChild(elem15);
 elem7.appendChild(elem8);
 elem6.appendChild(elem7);
 var elem22 = document.createElement('div');
-elem22.classList.add('row');
+elem22.classList.add('row',"card-buttons");
 var elem23 = document.createElement('div');
 elem23.classList.add('col-6');
 var elem24 = document.createElement('a');
@@ -126,6 +126,7 @@ var elem25 = document.createElement('div');
 elem25.classList.add('col-6');
 var elem26 = document.createElement('button');
 elem26.setAttribute('data-phone', JsonData.restaurants[i].restaurant.phone_numbers);
+elem26.setAttribute('data-name', JsonData.restaurants[i].restaurant.name);
 elem26.classList.add('btn', 'btn-success', 'btn-lg', 'btn-block', 'call-button');
 var txtnode = document.createTextNode('Call');
 elem26.appendChild(txtnode);
@@ -156,7 +157,8 @@ document.getElementById("retaurant-container").appendChild(elem0);
 function showPhoneModal(e)
 {
     $('#phoneModal').modal('show');
-    document.querySelector("#phoneModalTitle")=e.target.dataset.phone
+    document.querySelector("#phoneModalTitle").innerText=e.target.dataset.name
+    document.querySelector("#phoneModalDetails").innerText=e.target.dataset.phone
 }
 
 async function main(){
