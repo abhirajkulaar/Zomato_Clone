@@ -5,7 +5,7 @@ function getLocation() {
            
            window.latitude=location.coords.latitude;
            window.longitude=location.coords.longitude;
-           $('#reviewModal').modal('hide');
+           $('#countryModal').modal('hide');
           });
     } else {
       return;
@@ -60,7 +60,7 @@ function attachAutoCompleteCountry()
                 window.longitude=e.target.dataset.long;
         
                 closeAllLists();
-                $("#reviewModal").modal('hide')
+                $("#countryModal").modal('hide')
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 
@@ -142,8 +142,14 @@ var elem11 = document.createElement('b');
 var txtnode = document.createTextNode('Rating: ' + JsonData.restaurants[i].restaurant.user_rating.aggregate_rating);
 elem11.appendChild(txtnode);
 elem10.appendChild(elem11);
-var txtnode = document.createTextNode('('+JsonData.restaurants[i].restaurant.user_rating.votes +' Reviews)');
-elem10.appendChild(txtnode);
+var reviewButton=document.createElement('a')
+reviewButton.innerHTML='('+JsonData.restaurants[i].restaurant.user_rating.votes +' Reviews)';
+reviewButton.href="javascript:void(0)"
+reviewButton.addEventListener("click",showReviews);
+reviewButton.setAttribute("data-res_id",JsonData.restaurants[i].restaurant.R.res_id)
+
+
+elem10.appendChild(reviewButton);
 elem8.appendChild(elem10);
 var elem12 = document.createElement('p');
 elem12.classList.add('card-text');
@@ -234,8 +240,94 @@ function showPhoneModal(e)
     document.querySelector("#phoneModalDetails").innerText=e.target.dataset.phone
 }
 
+//Triggered when review details button is pressed
+async function showReviews(e){
+
+    console.log(e.target.dataset.res_id)
+
+    const reviewsList = await fetch("https://developers.zomato.com/api/v2.1/reviews?res_id="+e.target.dataset.res_id+"&start=0&count=5",{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}})
+    const reviewsJson = await reviewsList.json()
+    document.getElementById("restReviewContainer").innerHTML='';
+    document.getElementById("reviewModalTitle").innerText="Reviews"
+    for(let i=0;i<reviewsJson.user_reviews.length;i++)
+    {
+
+    var elem0 = document.createElement('div');
+elem0.classList.add('row', 'review-block');
+var elem1 = document.createElement('div');
+elem1.classList.add('col-sm-3');
+var elem2 = document.createElement('img');
+elem2.setAttribute('src', reviewsJson.user_reviews[i].review.user.profile_image);
+elem2.classList.add('img-rounded');
+elem1.appendChild(elem2);
+var elem3 = document.createElement('div');
+elem3.classList.add('review-block-name');
+var elem4 = document.createElement('a');
+elem4.setAttribute('href', reviewsJson.user_reviews[i].review.user.profile_url);
+var txtnode = document.createTextNode(reviewsJson.user_reviews[i].review.user.name);
+elem4.appendChild(txtnode);
+elem3.appendChild(elem4);
+elem1.appendChild(elem3);
+var elem5 = document.createElement('div');
+elem5.classList.add('review-block-date');
+var elem6 = document.createElement('br');
+var txtnode = document.createTextNode(reviewsJson.user_reviews[i].review.review_time_friendly);
+elem6.appendChild(txtnode);
+elem5.appendChild(elem6);
+elem1.appendChild(elem5);
+var elem7 = document.createElement('div');
+elem7.classList.add('col-sm-9');
+var elem8 = document.createElement('div');
+elem8.classList.add('review-block-title');
+var txtnode = document.createTextNode(reviewsJson.user_reviews[i].review.rating_text);
+elem8.appendChild(txtnode);
+var ratingScore = document.createElement("div");
+ratingScore.classList.add("review-block-rate")
+
+let starClass;
+
+if(reviewsJson.user_reviews[i].review.rating<=1)
+{
+starClass="btn-danger"
+}
+if(reviewsJson.user_reviews[i].review.rating>1&&reviewsJson.user_reviews[i].review.rating<=3)
+{
+starClass="btn-warning"
+}
+
+if(reviewsJson.user_reviews[i].review.rating>=4)
+{
+starClass="btn-success"
+}
+
+for(let j=0;j<5;j++)
+{
+    let star =document.createElement("button");
+    star.classList.add("btn","btn-xs","btn-review")
+    if(j<=reviewsJson.user_reviews[i].review.rating)
+    {star.classList.add(starClass)}
+    else{star.classList.add("btn-secondary")}
+    ratingScore.appendChild(star);
+}
 
 
+
+elem7.appendChild(ratingScore)
+elem7.appendChild(elem8);
+var elem9 = document.createElement('div');
+elem9.classList.add('review-block-description');
+var txtnode = document.createTextNode(reviewsJson.user_reviews[i].review.review_text);
+elem9.appendChild(txtnode);
+elem7.appendChild(elem9);
+
+elem0.appendChild(elem1);
+elem0.appendChild(elem7);
+document.getElementById("restReviewContainer").appendChild(elem0);
+    }
+$('#reviewModal').modal('show');
+
+
+}
 
 
 
@@ -252,7 +344,7 @@ function attachAutoCompleteLocation()
     document.querySelector("#locationSearch").addEventListener("input",async (e)=>
     {
     console.log(e.target.value)
-    if(e.target.value.length<3){return;}
+    if(e.target.value.length<3){closeAllLists();return;}
     const locatSuggestion = await fetch("https://developers.zomato.com/api/v2.1/locations?query="+e.target.value+"&lat="+window.latitude+"&lon="+window.longitude+"&count=5",{headers:{"user-key":"1649b13790f5b99b538c830ee66e73af"}})
     const json = await locatSuggestion.json();
     console.log(json)
@@ -278,7 +370,7 @@ function attachAutoCompleteLocation()
             /*create a DIV element for each matching element:*/
             b = document.createElement("DIV");
             /*make the matching letters bold:*/
-            b.innerHTML = "<strong>" + arr[i].title + "</strong>";
+            b.innerHTML =  arr[i].title 
             b.setAttribute("data-entity_id",arr[i].entity_id);
             b.setAttribute("data-entity_type",arr[i].entity_type);
             b.setAttribute("data-latitude",arr[i].latitude);
@@ -332,7 +424,7 @@ function attachAutoCompleteRestaurant()
     {
 
     e.target.dataset.rest_id="unset"
-    if(e.target.value.length<3){return;}
+    if(e.target.value.length<3){closeAllLists();return;}
     let sortBy = document.querySelector("#orderBy").value
     let sortOrder = document.querySelector("#orderVal").value
 
@@ -467,7 +559,7 @@ async function applySelectRestaurant(){
 
 
 //closes all auto-complete suggestions
-function closeAllLists(elmnt) {
+function closeAllLists() {
     /*close all autocomplete lists in the document,
     except the one passed as an argument:*/
     var x = document.getElementsByClassName("autocomplete-items");
@@ -486,9 +578,9 @@ function main(){
     window.latitude=0;
     window.longitude=0;
 
-    $('#reviewModal').modal({backdrop: 'static', keyboard: false})  
+    $('#countryModal').modal({backdrop: 'static', keyboard: false})  
     //show country select modal
-    $('#reviewModal').modal('show');
+    $('#countryModal').modal('show');
     getLocation()
     //attach applt selected query to Go button
     document.querySelector("#restSearchForm").addEventListener("submit",()=>applySelectRestaurant())

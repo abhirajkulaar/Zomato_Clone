@@ -84,6 +84,7 @@ input[type=submit] {
   cursor: pointer;
   background-color: #fff;
   border-bottom: 1px solid #d4d4d4;
+  font-weight: bold;
 }
 .autocomplete-items div:hover {
   /*when hovering an item:*/
@@ -93,6 +94,45 @@ input[type=submit] {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
+}
+.rating-block{
+	background-color:#FAFAFA;
+	border:1px solid #EFEFEF;
+	padding:15px 15px 20px 15px;
+	border-radius:3px;
+}
+.review-block{
+	background-color:#FAFAFA;
+	border:1px solid #EFEFEF;
+	padding:15px;
+	border-radius:3px;
+	margin-bottom:15px;
+}
+.review-block-name{
+	font-size:12px;
+	margin:10px 0;
+}
+.review-block-date{
+	font-size:12px;
+}
+.review-block-rate{
+	font-size:13px;
+	margin-bottom:15px;
+}
+.review-block-title{
+	font-size:15px;
+	font-weight:700;
+	margin-bottom:10px;
+}
+.review-block-description{
+	font-size:13px;
+}
+.img-rounded{
+  width:100px;
+  height:100px;
+}
+.btn-review{
+  margin-right: 2px;
 }
 
 
@@ -104,7 +144,7 @@ input[type=submit] {
   </head>
   <body>
    
-    <div class="modal fade bd-example-modal-lg " id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal fade bd-example-modal-lg " id="countryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
         <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header  text-center">
@@ -148,6 +188,30 @@ input[type=submit] {
         </div>
       </div>
 
+      <div id="reviewModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 id="reviewModalTitle"  class="modal-title text-center"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div id="restReviewContainer" class="modal-body">
+              
+      
+
+
+            
+            </div>
+            <div class="modal-footer">
+             
+            </div>
+          </div>
+        </div>
+      </div>
+
+
 
     <div class="container full-height">
 
@@ -178,17 +242,17 @@ input[type=submit] {
                            <div class="text-center">
                                <label for="orderBy">Order By:</label>
                                <select class=" dropdown-order form-control " name="orderBy" id="orderBy">
-                                 <option val="rating">Rating</option>
-                                 <option val="cost">Cost</option>
+                                 <option value="rating">Rating</option>
+                                 <option value="cost">Cost</option>
                                  
-                                 <option val="real_distance">Distance</option>
+                                 <option value="real_distance">Distance</option>
                                </select>
              
              
                                <label for="orderVal">Order :</label>
                                <select class="dropdown-order form-control " name="orderVal" id="orderVal">
-                                 <option val="desc">Descending</option>
-                                 <option val="asc">Ascending</option>
+                                 <option value="desc">Descending</option>
+                                 <option value="asc">Ascending</option>
                                  
                                  
                                </select>
